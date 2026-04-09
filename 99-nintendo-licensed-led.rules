@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="hidraw", KERNELS=="0005:0E6F:018C.*", RUN+="/usr/local/bin/procon-led.sh /dev/%k"
