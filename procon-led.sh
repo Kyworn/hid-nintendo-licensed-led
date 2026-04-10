@@ -2,6 +2,10 @@
 DEVNAME="$1"
 CURRENT=$(basename "$DEVNAME")
 
+LOCKFILE="/run/procon-led.lock"
+exec 200>"$LOCKFILE"
+flock -n 200 || exit 0
+
 # Collect all hidraw devices for Nintendo licensed controllers (0E6F:018C, Bluetooth bus 0005)
 DEVICES=()
 for uevent in /sys/class/hidraw/hidraw*/device/uevent; do
@@ -31,8 +35,12 @@ LED_MASKS=(0x01 0x02 0x04 0x08)
 LED_MASK=${LED_MASKS[$((PLAYER - 1))]}
 
 # Send Nintendo Switch HID output report 0x01, subcmd 0x30 (set player lights)
-python3 -c "
+/usr/bin/env python3 -c "
+import sys
 data = bytes([0x01, 0x00, 0x00, 0x01, 0x40, 0x40, 0x00, 0x01, 0x40, 0x40, 0x30, $LED_MASK])
-with open('$DEVNAME', 'wb') as f:
-    f.write(data)
+try:
+    with open('$DEVNAME', 'wb') as f:
+        f.write(data)
+except PermissionError:
+    sys.exit(1)
 "
