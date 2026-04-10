@@ -110,9 +110,9 @@ case "$1" in
         ;;
     --help|-h)
         echo "Usage:"
-        echo "  procon-led.sh /dev/hidrawX              Auto-assign player LED"
-        echo "  procon-led.sh --list                    List connected controllers"
-        echo "  procon-led.sh --set-player <1-4> /dev/hidrawX  Set specific player"
+        echo "  procon-led /dev/hidrawX              Auto-assign player LED"
+        echo "  procon-led --list                    List connected controllers"
+        echo "  procon-led --set-player <1-4> /dev/hidrawX  Set specific player"
         ;;
     "")
         echo "Error: missing device path. Use --list or --help." >&2

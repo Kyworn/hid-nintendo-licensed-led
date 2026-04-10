@@ -1,6 +1,6 @@
 # Maintainer: zorko <kyworn@gmail.com>
 pkgname=hid-nintendo-licensed-led
-pkgver=1.0.2
+pkgver=1.0.3
 pkgrel=1
 pkgdesc="Automatic player LED assignment for Nintendo-licensed Bluetooth controllers (vendor 0E6F)"
 arch=('any')
