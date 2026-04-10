@@ -24,10 +24,10 @@ When a controller connects, it automatically gets assigned player 1–4 based on
 
 ```bash
 # List connected controllers and their player assignment
-procon-led.sh --list
+procon-led --list
 
 # Force a specific player LED on a controller
-procon-led.sh --set-player 2 /dev/hidraw1
+procon-led --set-player 2 /dev/hidraw1
 ```
 
 ## Installation
@@ -43,7 +43,7 @@ yay -S hid-nintendo-licensed-led
 ```bash
 git clone https://github.com/Kyworn/hid-nintendo-licensed-led.git
 cd hid-nintendo-licensed-led
-sudo install -Dm755 procon-led.sh /usr/local/bin/procon-led.sh
+sudo install -Dm755 procon-led /usr/bin/procon-led
 sudo install -Dm644 99-nintendo-licensed-led.rules /usr/lib/udev/rules.d/99-nintendo-licensed-led.rules
 sudo udevadm control --reload-rules
 ```

@@ -13,6 +13,6 @@ sha256sums=('dd0aceb56629c52cc1309e9e2892e461e5bb3eebdfede6715e3344c884125d1a')
 package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
 
-    install -Dm755 procon-led.sh "${pkgdir}/usr/local/bin/procon-led.sh"
+    install -Dm755 procon-led "${pkgdir}/usr/bin/procon-led"
     install -Dm644 99-nintendo-licensed-led.rules "${pkgdir}/usr/lib/udev/rules.d/99-nintendo-licensed-led.rules"
 }
