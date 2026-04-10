@@ -1,12 +1,12 @@
 pkgbase = hid-nintendo-licensed-led
 	pkgdesc = Automatic player LED assignment for Nintendo-licensed Bluetooth controllers (vendor 0E6F)
-	pkgver = 1.0.1
+	pkgver = 1.0.2
 	pkgrel = 1
 	url = https://github.com/Kyworn/hid-nintendo-licensed-led
 	arch = any
 	license = MIT
 	depends = python
-	source = hid-nintendo-licensed-led-1.0.1.tar.gz::https://github.com/Kyworn/hid-nintendo-licensed-led/archive/v1.0.1.tar.gz
-	sha256sums = dd0aceb56629c52cc1309e9e2892e461e5bb3eebdfede6715e3344c884125d1a
+	source = hid-nintendo-licensed-led-1.0.2.tar.gz::https://github.com/Kyworn/hid-nintendo-licensed-led/archive/v1.0.2.tar.gz
+	sha256sums = b200372fb5c965775f01e66eb81353382e3a09fdae8ee57f21026782208633a6
 
 pkgname = hid-nintendo-licensed-led
