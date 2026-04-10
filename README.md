@@ -1,44 +1,75 @@
 # hid-nintendo-licensed-led
 
-Automatic player LED assignment for Nintendo-licensed Bluetooth controllers on Linux (vendor `0E6F`).
+> Automatic player LED assignment for Nintendo-licensed Bluetooth controllers on Linux.
 
-When a controller connects, it automatically gets assigned player 1, 2, 3 or 4 based on connection order — no manual setup needed.
+Connect up to 4 controllers and each one gets automatically assigned its player LED (P1, P2, P3, P4) — just like on a real Nintendo Switch. No manual setup, no fiddling around.
+
+## Features
+
+- **Plug & Play** — player LED is set automatically on connection
+- **Smart ordering** — players are assigned by connection order, consistently
+- **Race condition safe** — concurrent connections are handled via `flock`
+- **CLI override** — manually set player LEDs when you need to
+- **Zero configuration** — install, connect, play
 
 ## Tested on
 
-- Turtle Beach Rematch (Donkey Kong edition) — `0E6F:018C`
+| Controller | Vendor:Product | Status |
+|---|---|---|
+| Turtle Beach Rematch (Donkey Kong edition) | `0E6F:018C` | ✅ Works |
+| PDP Faceoff Deluxe | `0E6F:018C` | ✅ Works (reported) |
 
-If your controller has vendor ID `0E6F` and uses the Nintendo Switch HID protocol, it should work.
+If your controller has vendor ID `0E6F` and uses the Nintendo Switch HID protocol, it should work out of the box.
+
+## Screenshots
+
+<!-- TODO: add gif showing LEDs lighting up on connect -->
 
 ## How it works
 
-A udev rule triggers on Bluetooth HID device connection. A script sends a Nintendo Switch HID output report (`0x01`, subcmd `0x30`) to set the player LED based on the controller's position among connected devices.
+```
+Controller connects (Bluetooth)
+       ↓
+udev rule detects new hidraw device (0005:0E6F:018C)
+       ↓
+procon-led script runs with flock (prevents race conditions)
+       ↓
+Scans all connected controllers, determines player position
+       ↓
+Sends Nintendo Switch HID report (0x01, subcmd 0x30)
+       ↓
+Player LED lights up ✨
+```
 
 ## CLI Usage
 
 ### Automatic (udev)
 
-When a controller connects, it automatically gets assigned player 1–4 based on connection order.
+Nothing to do — the udev rule handles it on connection.
 
-### Manual
+### Manual override
 
 ```bash
-# List connected controllers and their player assignment
-procon-led --list
+# List connected controllers
+$ procon-led --list
+Connected controllers:
+  Player 1  /dev/hidraw8
+  Player 2  /dev/hidraw9
+  Player 3  /dev/hidraw10
 
-# Force a specific player LED on a controller
-procon-led --set-player 2 /dev/hidraw1
+# Force a controller to a specific player
+$ procon-led --set-player 2 /dev/hidraw10
 ```
 
 ## Installation
 
-### Via AUR
+### AUR
 
 ```bash
 yay -S hid-nintendo-licensed-led
 ```
 
-### Manually
+### Manual
 
 ```bash
 git clone https://github.com/Kyworn/hid-nintendo-licensed-led.git
@@ -48,11 +79,25 @@ sudo install -Dm644 99-nintendo-licensed-led.rules /usr/lib/udev/rules.d/99-nint
 sudo udevadm control --reload-rules
 ```
 
+Then reconnect your controller.
+
 ## Requirements
 
-- `python`
+- `python` (for the HID report)
+- `util-linux` (for `flock`, already installed on Arch)
 - A Nintendo-licensed Bluetooth controller with vendor ID `0E6F`
+
+## Troubleshooting
+
+**LED doesn't light up?**
+- Make sure Bluetooth pairing is done (controller shows in `bluetoothctl`)
+- Check that the udev rule is loaded: `udevadm control --reload-rules`
+- Try manual assignment: `procon-led --set-player 1 /dev/hidrawX`
+
+**Wrong player order?**
+- Disconnect all controllers, reconnect in the desired order
+- Or use `--set-player` to override manually
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE)

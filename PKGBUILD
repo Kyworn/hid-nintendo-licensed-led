@@ -1,8 +1,8 @@
 # Maintainer: zorko <kyworn@gmail.com>
 pkgname=hid-nintendo-licensed-led
-pkgver=1.0.3
+pkgver=1.0.4
 pkgrel=1
-pkgdesc="Automatic player LED assignment for Nintendo-licensed Bluetooth controllers (vendor 0E6F)"
+pkgdesc="Plug-and-play player LED assignment for Nintendo-licensed Bluetooth controllers on Linux"
 arch=('any')
 url="https://github.com/Kyworn/${pkgname}"
 license=('MIT')
