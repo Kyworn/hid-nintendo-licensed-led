@@ -8,7 +8,7 @@ url="https://github.com/Kyworn/${pkgname}"
 license=('MIT')
 depends=('python')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/v${pkgver}.tar.gz")
-sha256sums=('b200372fb5c965775f01e66eb81353382e3a09fdae8ee57f21026782208633a6')
+sha256sums=('215289f053664cc5994e8eef832a8c180f69a6a0d64192a53eec995b7f1ddf12')
 
 package() {
     cd "${srcdir}/${pkgname}-${pkgver}"
