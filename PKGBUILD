@@ -1,6 +1,6 @@
 # Maintainer: zorko <kyworn@gmail.com>
 pkgname=hid-nintendo-licensed-led
-pkgver=1.0.4
+pkgver=1.0.5
 pkgrel=1
 pkgdesc="Plug-and-play player LED assignment for Nintendo-licensed Bluetooth controllers on Linux"
 arch=('any')

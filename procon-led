@@ -16,6 +16,32 @@ collect_devices() {
     unset IFS
 }
 
+# Send the "set player lights" output report to a hidraw device.
+# Never creates the device node: a missing or non-character path is an error.
+write_led_report() {
+    local DEVNAME="$1"
+    local LED_MASK="$2"
+
+    if [ ! -c "$DEVNAME" ]; then
+        echo "Error: $DEVNAME is not a character device (controller not connected?)" >&2
+        exit 1
+    fi
+
+    /usr/bin/env python3 -c "
+import os, sys
+data = bytes([0x01, 0x00, 0x00, 0x01, 0x40, 0x40, 0x00, 0x01, 0x40, 0x40, 0x30, $LED_MASK])
+try:
+    fd = os.open('$DEVNAME', os.O_WRONLY)  # no O_CREAT: never creates a file
+except OSError as e:
+    print('Error opening $DEVNAME: %s' % e, file=sys.stderr)
+    sys.exit(1)
+try:
+    os.write(fd, data)
+finally:
+    os.close(fd)
+"
+}
+
 # Set player LED on a device
 set_led() {
     local DEVNAME="$1"
@@ -29,17 +55,9 @@ set_led() {
     local LED_MASK=${LED_MASKS[$((PLAYER - 1))]}
 
     exec 200>"$LOCKFILE"
-    flock -n 200 || exit 0
+    flock -w 10 200 || exit 0
 
-    /usr/bin/env python3 -c "
-import sys
-data = bytes([0x01, 0x00, 0x00, 0x01, 0x40, 0x40, 0x00, 0x01, 0x40, 0x40, 0x30, $LED_MASK])
-try:
-    with open('$DEVNAME', 'wb') as f:
-        f.write(data)
-except PermissionError:
-    sys.exit(1)
-"
+    write_led_report "$DEVNAME" "$LED_MASK"
 }
 
 # Auto mode: assign players by connection order
@@ -48,7 +66,7 @@ auto_assign() {
     local CURRENT=$(basename "$DEVNAME")
 
     exec 200>"$LOCKFILE"
-    flock -n 200 || exit 0
+    flock -w 10 200 || exit 0
 
     local DEVICES
     mapfile -t DEVICES < <(collect_devices)
@@ -67,15 +85,7 @@ auto_assign() {
 
     local LED_MASK=${LED_MASKS[$((PLAYER - 1))]}
 
-    /usr/bin/env python3 -c "
-import sys
-data = bytes([0x01, 0x00, 0x00, 0x01, 0x40, 0x40, 0x00, 0x01, 0x40, 0x40, 0x30, $LED_MASK])
-try:
-    with open('$DEVNAME', 'wb') as f:
-        f.write(data)
-except PermissionError:
-    sys.exit(1)
-"
+    write_led_report "$DEVNAME" "$LED_MASK"
 }
 
 # --list: show connected controllers
@@ -103,7 +113,7 @@ case "$1" in
         ;;
     --set-player)
         if [ -z "$2" ] || [ -z "$3" ]; then
-            echo "Usage: procon-led.sh --set-player <1-4> /dev/hidrawX" >&2
+            echo "Usage: procon-led --set-player <1-4> /dev/hidrawX" >&2
             exit 1
         fi
         set_led "$3" "$2"
